@@ -12,6 +12,7 @@ setup(
     description='Micropython-friendly terminal',
     long_description=io.open(
         os.path.join(base_path, 'README.rst'), encoding='utf-8'),
+    url='https://github.com/SmileyChris/uterm',
     packages=find_packages(),
     install_requires=[
         'pyserial',
