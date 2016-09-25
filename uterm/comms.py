@@ -32,7 +32,7 @@ class Comms(object):
         if silent is None:
             silent = self.silent
         self.terminal.tx(text)
-        if text[-1] != 13:
+        if text[-1:] != b'\r':
             return
         # Wait for ok
         stream = pyte.ByteStream()

@@ -6,12 +6,12 @@ base_path = os.path.dirname(os.path.realpath(__file__))
 
 setup(
     name='uterm',
-    version='0.1',
+    version='0.1.1',
     author='Chris Beaven',
     author_email='smileychris@gmail.com',
     description='Micropython-friendly terminal',
     long_description=io.open(
-        os.path.join(base_path, 'README.rst'), encoding='utf-8'),
+        os.path.join(base_path, 'README.rst'), encoding='utf-8').read(),
     url='https://github.com/SmileyChris/uterm',
     packages=find_packages(),
     install_requires=[
