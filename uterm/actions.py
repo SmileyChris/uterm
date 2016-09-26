@@ -48,7 +48,7 @@ class Uploader(object):
                 comms.import_module('sys')
                 # Note the explicit second \r to ensure the statement is
                 # executed.
-                comms.send('if %r in sys.modules: del sys.modules[%r]' % (
+                comms.send('if %r in sys.modules: del sys.modules[%r]\r' % (
                     module, module))
 
         return True
