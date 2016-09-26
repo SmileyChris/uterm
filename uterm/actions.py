@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import os
 
 import curses
@@ -20,8 +21,8 @@ class Uploader(object):
     def __call__(self, terminal):
         temp_name = '_{}'.format(self.name)
         comms = Comms(terminal, silent=True)
-        comms.send(b'_fh = open(%r, "wb")\r' % temp_name)
-        comms.send(b'_fhw = lambda text: _fh.write(text) and None\r')
+        comms.send('_fh = open(%r, "wb")' % temp_name)
+        comms.send('_fhw = lambda text: _fh.write(text) and None')
         with open(self.path, 'rb') as fh:
             fh.seek(0, 2)
             total = float(fh.tell())
@@ -33,17 +34,21 @@ class Uploader(object):
                     self.update(1)
                     break
                 self.update(fh.tell() / total)
-                comms.send(b'_fhw(' + repr(data).encode() + b')\r')
-            comms.send(b'_fh.close()\r')
+                comms.send('_fhw(' + repr(data).encode() + b')')
+            comms.send('_fh.close()')
             comms.import_module('os')
             comms.send(
-                b'if %r in os.listdir(): os.remove(%r)\r\r' % (
+                # Note the explicit second \r to ensure the statement is
+                # executed.
+                b'if %r in os.listdir(): os.remove(%r)\r' % (
                     self.name, self.name))
-            comms.send(b'os.rename(%r, %r)\r' % (temp_name, self.name))
+            comms.send('os.rename(%r, %r)' % (temp_name, self.name))
             module, ext = os.path.splitext(self.name)
             if ext == '.py':
                 comms.import_module('sys')
-                comms.send(b'if %r in sys.modules: del sys.modules[%r]\r\r' % (
+                # Note the explicit second \r to ensure the statement is
+                # executed.
+                comms.send('if %r in sys.modules: del sys.modules[%r]' % (
                     module, module))
 
         return True
@@ -103,13 +108,13 @@ def remote(terminal):
                         obj.container and cwd and (
                             cwd == obj.name or
                             cwd.startswith('%s/' % obj.name))):
-                    comms.send(b'os.chdir("/")\r')
+                    comms.send('os.chdir("/")')
                     cwd = '/'
-                comms.send(b'os.remove(%r)\r' % obj.name)
+                comms.send('os.remove(%r)' % obj.name)
             continue
         elif action == 'SELECT':
             if obj.container:
-                comms.send(b'os.chdir(%r)\r' % obj.name)
+                comms.send('os.chdir(%r)' % obj.name)
                 cwd = obj.name
                 continue
         break

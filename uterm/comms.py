@@ -16,12 +16,12 @@ class Comms(object):
     def import_module(self, name, silent=None):
         if name in self.imports:
             return
-        self.send(b'import %s\r' % name.encode(), silent=silent)
+        self.send('import %s' % name, silent=silent)
         self.imports.append(name)
 
     def json(self, command, silent=None):
         self.import_module('json', silent=silent)
-        output = b'print(json.dumps(%s))\r' % command.strip().encode()
+        output = 'print(json.dumps(%s))' % command.strip().encode()
         response = self.send(output, silent=silent)[len(output):]
         try:
             return json.loads(response)
@@ -29,17 +29,18 @@ class Comms(object):
             pass
 
     def send(self, text, silent=None):
-        if silent is None:
-            silent = self.silent
+        if hasattr(text, 'encode'):
+            text = text.encode()
+        text += b'\r'
         self.terminal.tx(text)
-        if text[-1:] != b'\r':
-            return
         # Wait for ok
         stream = pyte.ByteStream()
         width = 1000
         screen = pyte.Screen(width, 10)
         stream.attach(screen)
         incoming = io.BytesIO()
+        if silent is None:
+            silent = self.silent
         # TODO: add a timeout
         while True:
             data = self.terminal.rx(silent=silent)
