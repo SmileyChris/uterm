@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import argparse
 import os
 import time
 
@@ -15,10 +16,11 @@ class Terminal(object):
     escape_key = b'\x01'
     menu_key = b'\x1b'
 
-    def __init__(self, port, accept_input=True):
+    def __init__(self, port, accept_input=True, log=None):
         self.port = port
         self.accept_input = accept_input
         self.escape_mode = None
+        self.log = log
 
     @property
     def running(self):
@@ -66,7 +68,8 @@ class Terminal(object):
         if not waiting:
             return ''
         incoming = self.port.read(waiting)
-        self.log.write(incoming)
+        if self.log:
+            self.log.write(incoming)
         if not silent:
             self.screen_stream.feed(incoming)
             display = self.screen.display
@@ -98,7 +101,6 @@ class Terminal(object):
         # Don't interpret escape sequences, we want to send them on.
         window.keypad(0)
         self.window = window
-        self.log = open('log.txt', 'wb')
 
         # Set up terminal
         y, x = window.getmaxyx()
@@ -117,7 +119,6 @@ class Terminal(object):
                 if not self.accept_input:
                     raise
                 self.tx(b'\x03')
-        self.log.close()
 
     def run(self):
         # Set shorter escape delay.
@@ -126,8 +127,24 @@ class Terminal(object):
 
 
 def main():
-    port = serial.Serial('/dev/ttyUSB0', 115200)
-    Terminal(port).run()
+    parser = argparse.ArgumentParser(
+        description='Run a micropython-friendly terminal')
+    parser.add_argument('--log', help="log all incoming data to a file")
+    parser.add_argument(
+        '-p', '--port', default='/dev/ttyUSB0',
+        help="port to connect to (defaults to /dev/ttyUSB0)")
+    parser.add_argument(
+        '-b', '--baudrate', default='115200',
+        help="baud rate to connect with (defaults to 115200)")
+    args = parser.parse_args()
+    port = serial.Serial(args.port, int(args.baudrate))
+
+    log = open(args.log, 'wb') if args.log else None
+    try:
+        Terminal(port, log=log).run()
+    finally:
+        if log:
+            log.close()
 
 
 if __name__ == '__main__':
