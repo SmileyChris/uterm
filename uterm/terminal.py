@@ -74,7 +74,8 @@ class Terminal(object):
             self.screen_stream.feed(incoming)
             display = self.screen.display
             for i in self.screen.dirty:
-                self.window.addstr(i, 0, display[i].encode('utf-8'))
+                line = display[i].encode('ascii', 'replace')
+                self.window.addstr(i, 0, line)
             self.screen.dirty.clear()
             c = self.screen.cursor
             self.window.move(c.y, c.x)
