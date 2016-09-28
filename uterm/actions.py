@@ -81,8 +81,13 @@ def browse(terminal):
         return True
 
 
-def reset(terminal):
-    terminal.tx(b'\x03\x04')
+def reset(terminal, hard=True):
+    if hard:
+        comms = Comms(terminal)
+        comms.import_module('machine')
+        comms.send('machine.reset()')
+    else:
+        terminal.tx(b'\x03\x04')
     return True
 
 
