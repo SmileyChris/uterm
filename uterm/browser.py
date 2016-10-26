@@ -201,7 +201,7 @@ class PyBrowser(OSBrowser):
     return_container = False
 
     def file_match(self, name):
-        return fnmatch(name, '*.py')
+        return fnmatch(name, '*.py') or fnmatch(name, '*.mpy')
 
 
 class uPyBrowser(BrowserBase):
