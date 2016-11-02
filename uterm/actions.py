@@ -44,7 +44,7 @@ class Uploader(object):
                     self.name, self.name))
             comms.send('os.rename(%r, %r)' % (temp_name, self.name))
             module, ext = os.path.splitext(self.name)
-            if ext == '.py':
+            if ext in ('.py', '.mpy'):
                 comms.import_module('sys')
                 # Note the explicit second \r to ensure the statement is
                 # executed.
