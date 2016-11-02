@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 import io
 import json
+import time
 
 import pyte
 
@@ -41,8 +42,10 @@ class Comms(object):
         incoming = io.BytesIO()
         if silent is None:
             silent = self.silent
-        # TODO: add a timeout
+        timeout = time.time() + 3
         while True:
+            if time.time() > timeout:
+                raise ValueError('Timeout')
             data = self.terminal.rx(silent=silent)
             if not data:
                 continue

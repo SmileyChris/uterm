@@ -142,10 +142,15 @@ def main():
 
     log = open(args.log, 'wb') if args.log else None
     try:
-        Terminal(port, log=log).run()
-    finally:
-        if log:
-            log.close()
+        try:
+            Terminal(port, log=log).run()
+        finally:
+            if log:
+                log.close()
+    except IOError as e:
+        if e.errno != 5:
+            raise
+        print('Lost connection.')
 
 
 if __name__ == '__main__':
