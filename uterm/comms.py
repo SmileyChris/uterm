@@ -22,7 +22,7 @@ class Comms(object):
 
     def json(self, command, silent=None):
         self.import_module('json', silent=silent)
-        output = 'print(json.dumps(%s))' % command.strip().encode()
+        output = ('print(json.dumps(%s))' % command.strip()).encode()
         response = self.send(output, silent=silent)[len(output):]
         try:
             return json.loads(response)

@@ -34,7 +34,7 @@ class Uploader(object):
                     self.update(1)
                     break
                 self.update(fh.tell() / total)
-                comms.send('_fhw(' + repr(data).encode() + b')')
+                comms.send(b'_fhw(' + repr(data).encode() + b')')
             comms.send('_fh.close()')
             comms.import_module('os')
             comms.send(
