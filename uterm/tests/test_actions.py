@@ -30,7 +30,13 @@ class ResetTest(TestCase):
 
     def test_call(self):
         mock_terminal = mock.Mock()
+        mock_terminal.rx.return_value = b'>>> '
         actions.reset(mock_terminal)
+        mock_terminal.tx.assert_called_with(b'machine.reset()\r')
+
+    def test_call_soft(self):
+        mock_terminal = mock.Mock()
+        actions.reset(mock_terminal, hard=False)
         mock_terminal.tx.assert_called_with(b'\x03\x04')
 
 
