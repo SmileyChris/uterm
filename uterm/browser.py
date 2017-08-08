@@ -44,7 +44,7 @@ class Dir(File):
     def __init__(self, *args, **kwargs):
         super(Dir, self).__init__(*args, **kwargs)
         self.kids = None
-        self.expanded = False
+        self._expanded = False
 
     @property
     def kidnames(self):
@@ -75,7 +75,7 @@ class Dir(File):
 
     @expanded.setter
     def expanded(self, value):
-        self._expanded = self.children() and value
+        self._expanded = value and self.children()
 
     def collapse(self):
         self.expanded = False
