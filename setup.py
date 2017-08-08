@@ -6,7 +6,7 @@ base_path = os.path.dirname(os.path.realpath(__file__))
 
 setup(
     name='uterm',
-    version='0.5',
+    version='0.6',
     author='Chris Beaven',
     author_email='smileychris@gmail.com',
     description='Micropython-friendly terminal',
