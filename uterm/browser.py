@@ -11,6 +11,14 @@ def pad(data, width):
 
 
 class File(object):
+    """
+    A file / directory node in the filesystem.
+
+    Attributes:
+        container (bool): whether the filesystem node can contain other things.
+        name (str): The path of the file / directory
+        factory (BrowserBase): The instance which created this object
+    """
     container = False
 
     def __init__(self, name, factory, nice_name=None):
@@ -24,6 +32,10 @@ class File(object):
 
     @property
     def nice_name(self):
+        """
+        The basename of the file / directory node.
+        """
+
         if self._nice_name is not None:
             return self._nice_name
         return os.path.basename(self.name)
@@ -39,6 +51,14 @@ class File(object):
 
 
 class Dir(File):
+    """
+    A directory node in the filesystem.
+
+    Attributes:
+        kids (:obj:`list` of :obj:`File`): child filesystem items
+        expanded (bool): Whether the item is expanded in the UI
+    """
+
     container = True
 
     def __init__(self, *args, **kwargs):
@@ -53,6 +73,10 @@ class Dir(File):
         return self._kidnames
 
     def children(self):
+        """
+        Populate and return the kids attribute.
+        """
+
         if self.kidnames is None:
             return []
         if self.kids is None:
@@ -81,6 +105,12 @@ class Dir(File):
         self.expanded = False
 
     def traverse(self):
+        """
+        Traverses expanded child filesystem nodes
+
+        Yields:
+            Tuple (File, Int): child File object and and depth
+        """
         yield self, 0
         if not self.expanded:
             return
@@ -90,6 +120,14 @@ class Dir(File):
 
 
 class BrowserBase(object):
+    """
+    Abstracts a file browser UI.
+
+    Attributes:
+        dir_class (type): Type of directories
+        file_class (type): Type of files
+        initial_index (int):
+    """
     dir_class = Dir
     file_class = File
     initial_index = 0
@@ -107,6 +145,12 @@ class BrowserBase(object):
         self.base.expanded = True
 
     def item(self, name, *args, **kwargs):
+        """
+        Instantiate a File / Dir object from its name.
+
+        Arguments:
+            name (str):
+        """
         if self.is_container(name):
             obj_class = self.dir_class
         else:
@@ -114,6 +158,9 @@ class BrowserBase(object):
         return obj_class(name, factory=self, *args, **kwargs)
 
     def run(self, stdscr):
+        """
+        Draws the browser UI on the screen
+        """
         curidx = self.initial_index
         while True:
             stdscr.clear()
@@ -198,6 +245,7 @@ class OSBrowser(BrowserBase):
 
 
 class PyBrowser(OSBrowser):
+
     return_container = False
 
     def file_match(self, name):
@@ -205,6 +253,7 @@ class PyBrowser(OSBrowser):
 
 
 class uPyBrowser(BrowserBase):
+
     base_name = '/'
 
     def __init__(self, comms, *args, **kwargs):
