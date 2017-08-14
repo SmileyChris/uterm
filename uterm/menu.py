@@ -39,7 +39,7 @@ class Menu(object):
     @items.setter
     def items(self, items):
         self._items = items or []
-        self.window.resize(4 + len(items), self.width)
+        self.window.resize(4 + len(self._items), self.width)
         self.window.erase()
         self.window.addstr(1, 2, self.title)
         self.window.border()
