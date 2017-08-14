@@ -18,6 +18,8 @@ setup(
         'pyserial',
         'pyte',
     ],
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest', 'pytest-timeout'],
     entry_points={
         'console_scripts': [
             'uterm=uterm.terminal:main',
