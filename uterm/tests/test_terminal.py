@@ -79,3 +79,37 @@ class TXTest(TestCase):
             terminal.tx(self.CTRL_A)
             terminal.tx(code)
             mock_port.close.assert_any_call()
+
+
+class RXTest(TestCase):
+
+    def test_not_running(self):
+        mock_port = mock.Mock()
+        terminal = Terminal(mock_port)
+        mock_port.is_open = False
+        self.assertFalse(terminal.running)
+        self.assertEqual(terminal.rx(), '')
+
+    def test_not_waiting(self):
+        mock_port = mock.Mock()
+        terminal = Terminal(mock_port)
+        mock_port.inWaiting.return_value = False
+        self.assertEqual(terminal.rx(), '')
+
+    def test_read(self):
+        mock_port = mock.Mock()
+        terminal = Terminal(mock_port, log=mock.Mock())
+        expected = b'test'
+        mock_port.read.return_value = expected
+        mock_port.inWaiting.return_value = len(expected)
+
+        # Set up some things created in __call__
+        terminal.window = mock.Mock()
+        terminal.screen_stream = mock.Mock()
+        terminal.screen = mock.MagicMock()
+        terminal.screen.display = ['']
+        terminal.screen.dirty.__iter__.return_value = range(1)
+
+        range(1)
+
+        self.assertEqual(terminal.rx(), expected)
