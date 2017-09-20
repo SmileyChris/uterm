@@ -16,3 +16,9 @@ Quit from the menu or ``ctrl-a``, ``ctrl-q``.
 .. image:: demo.gif
    :alt: Demo of uterm running
 
+Some basic command line functions have also been added
+(run ``uterm --help`` for details)::
+
+    uterm ls
+    uterm get FILE
+    uterm exec COMMAND

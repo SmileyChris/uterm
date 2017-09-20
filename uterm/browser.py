@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import os
 import curses
 from fnmatch import fnmatch
@@ -6,7 +7,6 @@ ESC = 27
 
 
 def pad(data, width):
-    # XXX this won't work with UTF-8
     return data + ' ' * (width - len(data))
 
 

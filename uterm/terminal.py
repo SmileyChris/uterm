@@ -63,11 +63,17 @@ class Terminal(object):
             data = b'\r'
         self.port.write(data)
 
-    def rx(self, silent=False):
-        waiting = self.running and self.port.inWaiting()
-        if not waiting:
+    def rx(self, silent=False, readline=False):
+        if not self.running:
             return ''
-        incoming = self.port.read(waiting)
+        if readline:
+            self.port.timeout = 0.1
+            incoming = self.port.readline()
+        else:
+            waiting = self.port.inWaiting()
+            if not waiting:
+                return ''
+            incoming = self.port.read(waiting)
         if self.log:
             self.log.write(incoming)
         if not silent:
@@ -80,6 +86,22 @@ class Terminal(object):
             c = self.screen.cursor
             self.window.move(c.y, c.x)
         return incoming
+
+    def send_command(self, command):
+        command = command.strip().replace('\n', '\r')
+        self.tx(b'\x03\x05')
+        self.port.flush()
+        line = ''
+        while not line.endswith(b'=== '):
+            line += self.rx(silent=True)
+        if '\r' in command:
+            command += '\r\r\r'
+        command += '\x04'
+        self.tx(b'{}'.format(command))
+        self.port.flush()
+        # Read lines
+        for i in range(command.count('\r')+1):
+            self.rx(silent=True, readline=True)
 
     def loop(self):
         while self.running:

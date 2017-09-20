@@ -1,12 +1,13 @@
 from setuptools import setup, find_packages
 import io
 import os
+from uterm import __version__
 
 base_path = os.path.dirname(os.path.realpath(__file__))
 
 setup(
     name='uterm',
-    version='0.7',
+    version=__version__,
     author='Chris Beaven',
     author_email='smileychris@gmail.com',
     description='Micropython-friendly terminal',
@@ -17,12 +18,13 @@ setup(
     install_requires=[
         'pyserial',
         'pyte',
+        'docopt'
     ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest', 'pytest-timeout'],
     entry_points={
         'console_scripts': [
-            'uterm=uterm.terminal:main',
+            'uterm=uterm.main:main',
         ],
     },
     classifiers=[
